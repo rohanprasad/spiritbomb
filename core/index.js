@@ -1,4 +1,3 @@
-"use strict";
 const superagent = require("superagent").agent();
 const fs = require("fs");
 const { pipeline } = require("stream");
@@ -9,10 +8,6 @@ const config = require("./config");
 const constants = require("./constants");
 const utils = require("./utils");
 const SpeedHelper = require("./speed-helper");
-
-const videoUrl =
-  "https://1fhjlug.oloadcdn.net/dl/l/cq9xfxWBHsjt8kRd/YDr5XlGYmoM/Nick+And+Norah%27s+Infinite+Playlist+-+Full.z49w2.mp4?mime=true";
-const globalUrl = videoUrl;
 
 let downloadsInProgress = 0;
 let currentDownloadSpeed = 0;
@@ -91,15 +86,16 @@ const getFileNameFromContent = res => {
 
 const calculateDeadlineTimeout = () => {
   const minimumDownloadSpeedInKbps = 50;
+  const scaleFactor = 1.5;
   if (metainfo.contentLength <= 0) {
     return config.maxDownloadTimeInMs;
   }
 
   if (metainfo.partCount === 1) {
-    return Math.ceil((metainfo.contentLength * 1.1) / (minimumDownloadSpeedInKbps * 1024)) * 1000;
+    return Math.ceil((metainfo.contentLength * scaleFactor) / (minimumDownloadSpeedInKbps * 1024)) * 1000;
   }
 
-  return Math.ceil((config.chunkSizeInBytes * 1.1) / (minimumDownloadSpeedInKbps * 1024)) * 1000;
+  return Math.ceil((config.chunkSizeInBytes * scaleFactor) / (minimumDownloadSpeedInKbps * 1024)) * 1000;
 };
 
 const downloadPart = (url, part = 0) => {
@@ -303,7 +299,7 @@ const getNextPart = () => {
   return -1;
 };
 
-const downloadCompleteCallback = part => {
+const downloadCompleteCallback = () => {
   downloadsInProgress = downloadsInProgress - 1;
   MetaHelper.updateFileMeta(metainfo);
   let nextPart = getNextPart();
@@ -382,11 +378,6 @@ const startDownload = () => {
   }
 };
 
-metainfo = MetaHelper.generateOrReadMetaFile(globalUrl);
-if (metainfo.downloadCompleted) {
-  return;
-}
-
 const checkPartialRequest = () => {
   isPartialRequestSupported(metainfo.currentUrl)
     .then(() => {
@@ -412,8 +403,20 @@ const checkPartialRequest = () => {
     });
 };
 
-if (!metainfo.isHeadAssessed) {
-  checkPartialRequest();
-} else {
-  startDownload();
-}
+const downloader = argv => {
+  const link = argv.link;
+
+  metainfo = MetaHelper.generateOrReadMetaFile(link);
+  if (metainfo.downloadCompleted) {
+    console.log("Download completed")
+    return;
+  }
+
+  if (!metainfo.isHeadAssessed) {
+    checkPartialRequest();
+  } else {
+    startDownload();
+  }
+};
+
+module.exports = downloader;

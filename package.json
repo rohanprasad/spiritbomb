@@ -10,6 +10,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "superagent": "^5.1.0"
+    "check-node-version": "^4.0.1",
+    "superagent": "^5.1.0",
+    "yargs": "^14.0.0"
   }
 }
