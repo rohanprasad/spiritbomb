@@ -26,7 +26,7 @@ check({ node: ">= 10.0.0" }, (error, results) => {
         describe: "Name of the downloaded file",
         default: "",
       })
-      .boolean("s", {
+      .option("s", {
         alias: "Silent",
         describe: "Silent",
         default: false,
