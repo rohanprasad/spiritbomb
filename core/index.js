@@ -405,9 +405,10 @@ const checkPartialRequest = () => {
 
 const downloader = (argv) => {
   const link = argv.link;
+  const name = argv.name;
   process.chdir(argv.path);
 
-  metainfo = MetaHelper.generateOrReadMetaFile(link);
+  metainfo = MetaHelper.generateOrReadMetaFile(link, name);
   if (metainfo.downloadCompleted) {
     console.log("Download completed");
     return;

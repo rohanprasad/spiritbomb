@@ -12,10 +12,10 @@ const readMetaFile = (url) => {
   return fileMeta;
 };
 
-const generateMetaFile = (url) => {
+const generateMetaFile = (url, name = "") => {
   const fileMeta = {
     fileName: generateHash(url),
-    finalFilename: "",
+    finalFilename: name,
     originalUrl: url,
     currentUrl: url,
     partStatus: {},
@@ -33,7 +33,7 @@ const updateFileMeta = (fileMeta) => {
   fs.writeFileSync(`${fileMeta.fileName}.meta`, JSON.stringify(fileMeta, null, 2));
 };
 
-const generateOrReadMetaFile = (url) => {
+const generateOrReadMetaFile = (url, name = "") => {
   const metaFileName = `${generateHash(url)}.meta`;
   if (checkIfFileExists(metaFileName)) {
     const content = readMetaFile(url);
