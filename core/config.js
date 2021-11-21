@@ -3,5 +3,5 @@ module.exports = {
   maxParallelDownloads: 6,
   maxRetries: 3,
   downloadSpeedRefreshRateInMs: 500,
-  maxDownloadTimeInMs: 1000 * 60
+  maxDownloadTimeInMs: 1000 * 60,
 };

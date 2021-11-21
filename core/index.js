@@ -21,7 +21,7 @@ const cookies = () => {};
 
 let metainfo = {};
 
-const getBytesRange = part => {
+const getBytesRange = (part) => {
   let startRange = (part - 1) * config.chunkSizeInBytes;
   let endRange = part * config.chunkSizeInBytes - 1;
   endRange = Math.min(endRange, metainfo.contentLength);
@@ -29,7 +29,7 @@ const getBytesRange = part => {
   return `${startRange}-${endRange}`;
 };
 
-const isFilePartSane = part => {
+const isFilePartSane = (part) => {
   if (!utils.checkIfFileExists(`${metainfo.fileName}.${part}`)) {
     return false;
   }
@@ -43,7 +43,7 @@ const isFilePartSane = part => {
   return false;
 };
 
-const getContentLength = res => {
+const getContentLength = (res) => {
   if (res && res.header && res.header["content-length"]) {
     metainfo.contentLength = parseInt(res.header["content-length"]);
     MetaHelper.updateFileMeta(metainfo);
@@ -52,7 +52,7 @@ const getContentLength = res => {
   return false;
 };
 
-const checkAcceptRanges = res => {
+const checkAcceptRanges = (res) => {
   if (res && res.header) {
     if (res.header["accept-ranges"] && res.header["accept-ranges"] === "bytes") {
       metainfo.acceptsRanges = constants.acceptRangesEnum.yes;
@@ -68,13 +68,13 @@ const checkAcceptRanges = res => {
   return false;
 };
 
-const getFileNameFromContent = res => {
+const getFileNameFromContent = (res) => {
   if (res.header["content-disposition"]) {
     let contentDisposition = res.header["content-disposition"];
     contentDisposition = contentDisposition
       .split(";")
-      .map(value => value.trim())
-      .filter(value => value.indexOf("filename") === 0);
+      .map((value) => value.trim())
+      .filter((value) => value.indexOf("filename") === 0);
     if (contentDisposition.length) {
       metainfo.finalFilename = contentDisposition[0].split("=")[1].replace(/['"]+/g, "");
       MetaHelper.updateFileMeta(metainfo);
@@ -112,11 +112,11 @@ const downloadPart = (url, part = 0) => {
   downloadsInProgress = downloadsInProgress + 1;
 
   let request = superagent.get(url).timeout({
-    deadline: calculateDeadlineTimeout()
+    deadline: calculateDeadlineTimeout(),
   });
 
   // Add all headers
-  Object.keys(constants.headers).forEach(headerKey => {
+  Object.keys(constants.headers).forEach((headerKey) => {
     request = request.set(headerKey, constants.headers[headerKey]);
   });
 
@@ -124,7 +124,7 @@ const downloadPart = (url, part = 0) => {
     request.set("Range", `bytes=${getBytesRange(part)}`);
   }
 
-  request = request.on("error", err => {
+  request = request.on("error", (err) => {
     if (err) {
       console.log(err);
     }
@@ -144,7 +144,7 @@ const downloadPart = (url, part = 0) => {
     downloadCompleteCallback(part);
   });
 
-  request = request.on("response", resp => {
+  request = request.on("response", (resp) => {
     if (resp.status === 200 && checkAcceptRanges(resp)) {
       getContentLength(resp);
       getFileNameFromContent(resp);
@@ -182,22 +182,22 @@ const downloadPart = (url, part = 0) => {
   request.pipe(stream);
 };
 
-const isPartialRequestSupported = url => {
-  const newPromise = new Promise(function(resolve, reject) {
+const isPartialRequestSupported = (url) => {
+  const newPromise = new Promise(function (resolve, reject) {
     let request = superagent.head(url);
     // Add all headers
-    Object.keys(constants.headers).forEach(headerKey => {
+    Object.keys(constants.headers).forEach((headerKey) => {
       request = request.set(headerKey, constants.headers[headerKey]);
     });
 
     request
-      .then(res => {
+      .then((res) => {
         getContentLength(res);
         checkAcceptRanges(res);
         getFileNameFromContent(res);
         resolve();
       })
-      .catch(err => {
+      .catch((err) => {
         if (err && err.response && err.response.status === 404) {
           console.error("404, please refresh the link");
           reject(err);
@@ -264,7 +264,7 @@ const verifyAndMerge = () => {
       pipeline(
         fs.createReadStream(`${metainfo.fileName}.${part}`),
         fs.createWriteStream(`${metainfo.finalFilename}`, { flags: "a" }),
-        err => {
+        (err) => {
           if (err) {
             console.error(err);
           } else {
@@ -280,7 +280,7 @@ const verifyAndMerge = () => {
   joinPart();
 };
 
-const logUStatement = statement => {
+const logUStatement = (statement) => {
   readline.clearLine(process.stdout);
   readline.cursorTo(process.stdout, 0);
   process.stdout.write(statement);
@@ -327,7 +327,7 @@ const RebuildCurrentStatus = () => {
       fs.accessSync(`${metainfo.fileName}.${part}`);
       if (isFilePartSane(part)) {
         metainfo.partStatus[part] = {
-          status: constants.partStatusEnum.completed
+          status: constants.partStatusEnum.completed,
         };
       } else {
         fs.unlinkSync(`${metainfo.fileName}.${part}`);
@@ -389,7 +389,7 @@ const checkPartialRequest = () => {
       MetaHelper.updateFileMeta(metainfo);
       startDownload();
     })
-    .catch(err => {
+    .catch((err) => {
       if (err && err.response && err.response.status === 302) {
         checkPartialRequest();
         return;
@@ -403,12 +403,13 @@ const checkPartialRequest = () => {
     });
 };
 
-const downloader = argv => {
+const downloader = (argv) => {
   const link = argv.link;
+  process.chdir(argv.path);
 
   metainfo = MetaHelper.generateOrReadMetaFile(link);
   if (metainfo.downloadCompleted) {
-    console.log("Download completed")
+    console.log("Download completed");
     return;
   }
 

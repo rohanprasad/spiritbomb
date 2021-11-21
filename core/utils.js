@@ -1,14 +1,12 @@
 const crypto = require("crypto");
 const fs = require("fs");
+const path = require("path");
 
-const generateHash = content => {
-  return crypto
-    .createHash("md5")
-    .update(content)
-    .digest("hex");
+const generateHash = (content) => {
+  return crypto.createHash("md5").update(content).digest("hex");
 };
 
-const checkIfFileExists = filepath => {
+const checkIfFileExists = (filepath) => {
   try {
     fs.accessSync(filepath, fs.constants.F_OK);
     return true;
@@ -17,7 +15,7 @@ const checkIfFileExists = filepath => {
   }
 };
 
-const convertSpeed = currentDownloadSpeed => {
+const convertSpeed = (currentDownloadSpeed) => {
   let unit = "bytes";
   let speed = currentDownloadSpeed;
   if (speed > 1024) {
@@ -33,13 +31,10 @@ const convertSpeed = currentDownloadSpeed => {
   return `${speed} ${unit} per second`;
 };
 
-const generateFilenameFromUrl = url => {
+const generateFilenameFromUrl = (url) => {
   let finalFilename;
   try {
-    finalFilename = url
-      .split("?")[0]
-      .split("/")
-      .pop();
+    finalFilename = url.split("?")[0].split("/").pop();
   } catch (err) {
     finalFilename = generateHash(url);
   }
@@ -50,5 +45,5 @@ module.exports = {
   generateHash,
   checkIfFileExists,
   convertSpeed,
-  generateFilenameFromUrl
+  generateFilenameFromUrl,
 };
