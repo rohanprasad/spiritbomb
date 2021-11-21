@@ -25,6 +25,11 @@ check({ node: ">= 10.0.0" }, (error, results) => {
         alias: "name",
         describe: "Name of the downloaded file",
         default: "",
+      })
+      .boolean("s", {
+        alias: "Silent",
+        describe: "Silent",
+        default: false,
       }).argv;
 
     downloader(argv);
