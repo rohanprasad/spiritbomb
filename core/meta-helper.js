@@ -33,7 +33,7 @@ const updateFileMeta = (fileMeta) => {
   fs.writeFileSync(`${fileMeta.fileName}.meta`, JSON.stringify(fileMeta, null, 2));
 };
 
-const generateOrReadMetaFile = ({link, name, origin}) => {
+const generateOrReadMetaFile = ({ link, name, origin }) => {
   const metaFileName = `${generateHash(link)}.meta`;
   if (checkIfFileExists(metaFileName)) {
     const content = readMetaFile(metaFileName);

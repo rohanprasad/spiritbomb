@@ -34,7 +34,7 @@ check({ node: ">= 10.0.0" }, (error, results) => {
       .option("o", {
         alias: "Origin",
         describe: "Original URL",
-        default: ""
+        default: "",
       }).argv;
 
     downloader(argv);

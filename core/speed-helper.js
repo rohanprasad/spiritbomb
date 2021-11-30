@@ -3,7 +3,7 @@ const fs = require("fs");
 const config = require("./config");
 const constants = require("./constants");
 
-const progressCalculator = fileMeta => {
+const progressCalculator = (fileMeta) => {
   return () => {
     let partDone = 0;
     for (let part = 1; part <= fileMeta.partCount; ++part) {
@@ -15,7 +15,7 @@ const progressCalculator = fileMeta => {
   };
 };
 
-const getDownloadSpeedCalculator = fileMeta => {
+const getDownloadSpeedCalculator = (fileMeta) => {
   let currentFileSizeSum = 0;
 
   return () => {
@@ -45,5 +45,5 @@ const getDownloadSpeedCalculator = fileMeta => {
 
 module.exports = {
   progressCalculator,
-  getDownloadSpeedCalculator
+  getDownloadSpeedCalculator,
 };
