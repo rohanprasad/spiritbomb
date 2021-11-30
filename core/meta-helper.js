@@ -13,7 +13,7 @@ const readMetaFile = (metaFileName) => {
 
 const generateMetaFile = (url, name = "", origin = "") => {
   const fileMeta = {
-    fileName: generateHash(url),
+    fileName: generateHash(origin),
     finalFilename: name,
     origin: origin,
     originalUrl: url,
@@ -34,7 +34,7 @@ const updateFileMeta = (fileMeta) => {
 };
 
 const generateOrReadMetaFile = ({ link, name, origin }) => {
-  const metaFileName = `${generateHash(link)}.meta`;
+  const metaFileName = `${generateHash(origin)}.meta`;
   if (checkIfFileExists(metaFileName)) {
     const content = readMetaFile(metaFileName);
     if (content) {
