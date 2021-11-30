@@ -404,14 +404,12 @@ const checkPartialRequest = () => {
 };
 
 const downloader = (argv) => {
-  const link = argv.link;
-  const name = argv.name;
   if (argv.silent) {
     console.log = () => {};
   }
   process.chdir(argv.path);
 
-  metainfo = MetaHelper.generateOrReadMetaFile(link, name);
+  metainfo = MetaHelper.generateOrReadMetaFile(argv);
   if (metainfo.downloadCompleted) {
     console.log("Download completed");
     return;

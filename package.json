@@ -12,6 +12,9 @@
   "dependencies": {
     "check-node-version": "^4.0.1",
     "superagent": "^5.1.0",
-    "yargs": "^14.0.0"
+    "yargs": "^17.3.0"
+  },
+  "devDependencies": {
+    "husky": "^7.0.4"
   }
 }

@@ -1,8 +1,7 @@
 const fs = require("fs");
 const { checkIfFileExists, generateHash } = require("./utils");
 
-const readMetaFile = (url) => {
-  const metaFileName = `${generateHash(url)}.meta`;
+const readMetaFile = (metaFileName) => {
   let fileMeta;
   try {
     fileMeta = JSON.parse(fs.readFileSync(`${metaFileName}`));
@@ -12,10 +11,11 @@ const readMetaFile = (url) => {
   return fileMeta;
 };
 
-const generateMetaFile = (url, name = "") => {
+const generateMetaFile = (url, name = "", origin = "") => {
   const fileMeta = {
     fileName: generateHash(url),
     finalFilename: name,
+    origin: origin,
     originalUrl: url,
     currentUrl: url,
     partStatus: {},
@@ -33,15 +33,15 @@ const updateFileMeta = (fileMeta) => {
   fs.writeFileSync(`${fileMeta.fileName}.meta`, JSON.stringify(fileMeta, null, 2));
 };
 
-const generateOrReadMetaFile = (url, name = "") => {
-  const metaFileName = `${generateHash(url)}.meta`;
+const generateOrReadMetaFile = ({link, name, origin}) => {
+  const metaFileName = `${generateHash(link)}.meta`;
   if (checkIfFileExists(metaFileName)) {
-    const content = readMetaFile(url);
+    const content = readMetaFile(metaFileName);
     if (content) {
       return content;
     }
   }
-  return generateMetaFile(url);
+  return generateMetaFile(link, name, origin);
 };
 
 module.exports = {

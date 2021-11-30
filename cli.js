@@ -30,6 +30,11 @@ check({ node: ">= 10.0.0" }, (error, results) => {
         alias: "Silent",
         describe: "Silent",
         default: false,
+      })
+      .option("o", {
+        alias: "Origin",
+        describe: "Original URL",
+        default: ""
       }).argv;
 
     downloader(argv);
